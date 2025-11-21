@@ -1,0 +1,73 @@
+<div class="page-width" style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
+  <h1 style="text-align: center; margin-bottom: 40px;">My Wishlist</h1>
+  
+  <div id="wishlist-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+    </div>
+
+  <div id="wishlist-empty" style="display: none; text-align: center;">
+    <p>Your wishlist is empty.</p>
+    <a href="/collections/all" style="text-decoration: underline; color: #D4AF37;">Continue Shopping</a>
+  </div>
+
+  <div id="wishlist-loading" style="text-align: center;">Loading...</div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const grid = document.getElementById('wishlist-grid');
+    const empty = document.getElementById('wishlist-empty');
+    const loading = document.getElementById('wishlist-loading');
+
+    // 1. Get IDs from browser storage
+    const wishlist = JSON.parse(localStorage.getItem('my_wishlist') || '[]');
+
+    if (wishlist.length === 0) {
+      loading.style.display = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+
+    // 2. Fetch Product Data from Shopify Search API
+    // Query format: id:123 OR id:456
+    const query = wishlist.map(id => `id:${id}`).join(' OR ');
+    const url = `/search/suggest.json?q=${query}&resources[type]=product&resources[limit]=50`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const products = data.resources.results.products;
+
+      loading.style.display = 'none';
+
+      // 3. Render Products
+      if (products.length > 0) {
+        grid.innerHTML = products.map(p => `
+          <div style="border: 1px solid #eee; padding: 10px; position: relative;">
+             <a href="${p.url}">
+               <img src="${p.featured_image.url}" style="width: 100%; height: auto; aspect-ratio: 3/4; object-fit: cover;">
+             </a>
+             <button onclick="toggleWishlist('${p.id}', '', this)" 
+               style="position: absolute; top: 10px; right: 10px; background: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">
+               X
+             </button>
+             <h3 style="font-size: 1rem; margin: 10px 0;">${p.title}</h3>
+             <p>${p.price}</p>
+             <a href="${p.url}" style="display: block; text-align: center; background: black; color: white; padding: 8px; text-decoration: none;">View</a>
+          </div>
+        `).join('');
+      } else {
+        empty.style.display = 'block';
+      }
+    } catch (error) {
+      console.error(error);
+      loading.innerText = "Error loading wishlist";
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Wishlist Page",
+  "presets": [{"name": "Wishlist Page"}]
+}
+{% endschema %}

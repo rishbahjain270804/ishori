@@ -1,0 +1,1141 @@
+{% comment %}
+  -----------------------------------------------------------------------------
+  Section: Ishori Premium Contact Page
+  File: sections/custom-contact-page.liquid
+  Description: A luxury, two-column contact section with extensive customization.
+  -----------------------------------------------------------------------------
+{% endcomment %}
+
+{%- style -%}
+  /* --- SCOPED CSS VARIABLES FROM SETTINGS --- */
+  #shopify-section-{{ section.id }} {
+    --pt: {{ section.settings.padding_top }}px;
+    --pb: {{ section.settings.padding_bottom }}px;
+    --pl: {{ section.settings.padding_left }}px;
+    --pr: {{ section.settings.padding_right }}px;
+    --bg-color: {{ section.settings.background_color }};
+    --max-width: {{ section.settings.max_width }}px;
+    --col-gap: {{ section.settings.column_gap }}px;
+
+    /* Form Styles */
+    --form-bg: {{ section.settings.form_bg_color }};
+    --form-pad: {{ section.settings.form_padding }}px;
+    --form-rad: {{ section.settings.form_border_radius }}px;
+    --input-height: {{ section.settings.input_height }}px;
+    --input-border: {{ section.settings.input_border_color }};
+    --input-rad: {{ section.settings.input_border_radius }}px;
+    --input-text: {{ section.settings.input_text_color }};
+    --label-color: {{ section.settings.label_color }};
+    --area-height: {{ section.settings.textarea_height }}px;
+
+    /* Button Styles */
+    --btn-bg: {{ section.settings.btn_bg_color }};
+    --btn-text: {{ section.settings.btn_text_color }};
+    --btn-hover: {{ section.settings.btn_hover_bg_color }};
+    --btn-py: {{ section.settings.btn_padding_y }}px;
+    --btn-px: {{ section.settings.btn_padding_x }}px;
+    --btn-rad: {{ section.settings.btn_radius }}px;
+    --btn-font: {{ section.settings.btn_font_size }}px;
+
+    /* Info Block Styles */
+    --block-gap: {{ section.settings.info_block_spacing }}px;
+    --icon-size: {{ section.settings.icon_size }}px;
+    --icon-color: {{ section.settings.icon_color }};
+    --info-title-size: {{ section.settings.info_title_size }}px;
+    --info-title-color: {{ section.settings.info_title_color }};
+    --info-text-size: {{ section.settings.info_content_size }}px;
+    --info-text-color: {{ section.settings.info_content_color }};
+
+    /* Typography */
+    --h-size: {{ section.settings.heading_size }}px;
+    --h-color: {{ section.settings.heading_color }};
+    --sub-size: {{ section.settings.desc_size }}px;
+    --sub-color: {{ section.settings.desc_color }};
+  }
+
+  /* --- RESPONSIVE OVERRIDES --- */
+  @media screen and (max-width: 768px) {
+    #shopify-section-{{ section.id }} {
+      --pt: {{ section.settings.mob_padding_top }}px;
+      --pb: {{ section.settings.mob_padding_bottom }}px;
+      --pl: {{ section.settings.mob_padding_horizontal }}px;
+      --pr: {{ section.settings.mob_padding_horizontal }}px;
+      --h-size: {{ section.settings.mob_heading_size }}px;
+      --sub-size: {{ section.settings.mob_desc_size }}px;
+    }
+  }
+
+  /* --- CORE STYLES --- */
+  .ishori-contact-section {
+    background-color: var(--bg-color);
+    padding: var(--pt) var(--pr) var(--pb) var(--pl);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ishori-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .ishori-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--col-gap);
+    align-items: start;
+  }
+
+  @media screen and (max-width: 900px) {
+    {% if section.settings.stack_mobile %}
+    .ishori-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    {% endif %}
+  }
+
+  /* Left Column: Form */
+  .ishori-form-wrapper {
+    background-color: var(--form-bg);
+    padding: var(--form-pad);
+    border-radius: var(--form-rad);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03); /* Subtle luxury shadow */
+    transition: transform 0.4s ease;
+  }
+
+  .ishori-header {
+    margin-bottom: 30px;
+  }
+
+  .ishori-header h2 {
+    font-size: var(--h-size);
+    color: var(--h-color);
+    margin: 0 0 10px 0;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    font-weight: 500; /* Clean premium look */
+  }
+
+  .ishori-header p {
+    font-size: var(--sub-size);
+    color: var(--sub-color);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .ishori-field {
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .ishori-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--label-color);
+    margin-bottom: 8px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .ishori-input, 
+  .ishori-select, 
+  .ishori-textarea {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--input-border);
+    border-radius: var(--input-rad);
+    color: var(--input-text);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    appearance: none;
+  }
+
+  .ishori-input, .ishori-select {
+    height: var(--input-height);
+    padding: 0 15px;
+  }
+
+  .ishori-textarea {
+    height: var(--area-height);
+    padding: 15px;
+    resize: vertical;
+  }
+
+  .ishori-input:focus, 
+  .ishori-select:focus, 
+  .ishori-textarea:focus {
+    outline: none;
+    border-color: var(--btn-bg); /* Accent with button color */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  /* Phone Input Specifics */
+  .ishori-phone-wrapper {
+    position: relative;
+  }
+  .ishori-phone-prefix {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--input-text);
+    font-weight: 500;
+    pointer-events: none;
+  }
+  .ishori-input.phone-pad {
+    padding-left: 50px;
+  }
+
+  /* Select Chevron */
+  .select-wrapper {
+    position: relative;
+  }
+  .select-wrapper::after {
+    content: '';
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-right: 1px solid var(--input-text);
+    border-bottom: 1px solid var(--input-text);
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+
+  /* Button & Loading */
+  .ishori-btn {
+    width: 100%;
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    border: none;
+    border-radius: var(--btn-rad);
+    padding: var(--btn-py) var(--btn-px);
+    font-size: var(--btn-font);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+  }
+
+  .ishori-btn:hover {
+    background-color: var(--btn-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+
+  /* Loading Spinner */
+  .ishori-spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 0.8s linear infinite;
+    margin-left: 10px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ishori-btn.loading .ishori-btn-text { opacity: 0.8; }
+  .ishori-btn.loading .ishori-spinner { display: block; }
+
+  /* Messages */
+  .form-status {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+  .form-status-error { background: #fff5f5; color: #c53030; border: 1px solid #fc8181; }
+  .form-status-success { background: #f0fff4; color: #276749; border: 1px solid #68d391; }
+
+  /* Right Column: Info Blocks */
+  .ishori-info-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--block-gap);
+    padding-top: 10px; /* Visual balance */
+  }
+
+  .ishori-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    opacity: 0;
+    animation: fadeInUp 0.6s forwards;
+  }
+
+  /* Stagger animation for blocks */
+  .ishori-block:nth-child(1) { animation-delay: 0.1s; }
+  .ishori-block:nth-child(2) { animation-delay: 0.2s; }
+  .ishori-block:nth-child(3) { animation-delay: 0.3s; }
+  .ishori-block:nth-child(4) { animation-delay: 0.4s; }
+  .ishori-block:nth-child(5) { animation-delay: 0.5s; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .ishori-icon-box {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--icon-color);
+  }
+  .ishori-icon-box svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5px;
+  }
+
+  .ishori-block-content h3 {
+    font-size: var(--info-title-size);
+    color: var(--info-title-color);
+    margin: 0 0 5px 0;
+    font-weight: 600;
+  }
+
+  .ishori-block-content p, 
+  .ishori-block-content a {
+    font-size: var(--info-text-size);
+    color: var(--info-text-color);
+    margin: 0;
+    line-height: 1.6;
+    text-decoration: none;
+    transition: color 0.2s;
+    display: block;
+  }
+
+  .ishori-block-content a:hover {
+    color: var(--icon-color);
+    text-decoration: underline;
+  }
+  
+  /* Social Icons List */
+  .ishori-social-list {
+    display: flex;
+    gap: 15px;
+    margin-top: 5px;
+  }
+  .ishori-social-list a svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--info-text-color);
+    transition: stroke 0.3s;
+  }
+  .ishori-social-list a:hover svg {
+    stroke: var(--icon-color);
+  }
+
+{%- endstyle -%}
+
+<div class="ishori-contact-section">
+  <div class="ishori-container">
+    <div class="ishori-grid">
+      
+      <div class="ishori-form-wrapper">
+        <div class="ishori-header">
+          {% if section.settings.heading != blank %}
+            <h2>{{ section.settings.heading }}</h2>
+          {% endif %}
+          {% if section.settings.description != blank %}
+            <p>{{ section.settings.description }}</p>
+          {% endif %}
+        </div>
+
+        {% form 'contact' %}
+          {% if form.posted_successfully? %}
+            <div class="form-status form-status-success" tabindex="-1" autofocus>
+              {{ 'templates.contact.form.post_success' | t }}
+            </div>
+            <script>
+              // Auto-scroll to message on success
+              window.addEventListener('load', () => {
+                document.querySelector('.form-status-success').scrollIntoView({behavior: 'smooth', block: 'center'});
+              });
+            </script>
+          {% elsif form.errors %}
+            <div class="form-status form-status-error" autofocus>
+              {{ form.errors | default_errors }}
+            </div>
+          {% endif %}
+
+          <div class="ishori-field">
+            <label class="ishori-label" for="ContactForm-name">Name <span aria-hidden="true">*</span></label>
+            <input
+              class="ishori-input"
+              autocomplete="name"
+              type="text"
+              id="ContactForm-name"
+              name="contact[name]"
+              value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+              placeholder="Your Full Name"
+              required
+              aria-required="true"
+            >
+          </div>
+
+          <div class="ishori-field">
+            <label class="ishori-label" for="ContactForm-email">Email <span aria-hidden="true">*</span></label>
+            <input
+              class="ishori-input"
+              autocomplete="email"
+              type="email"
+              id="ContactForm-email"
+              name="contact[email]"
+              spellcheck="false"
+              autocapitalize="off"
+              value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+              placeholder="name@example.com"
+              required
+              aria-required="true"
+            >
+          </div>
+
+          <div class="ishori-field">
+            <label class="ishori-label" for="ContactForm-phone">Phone Number <span aria-hidden="true">*</span></label>
+            <div class="ishori-phone-wrapper">
+              <span class="ishori-phone-prefix">+91</span>
+              <input
+                class="ishori-input phone-pad"
+                autocomplete="tel"
+                type="tel"
+                id="ContactForm-phone"
+                name="contact[phone]"
+                pattern="[0-9]{10}"
+                value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+                placeholder="98765 43210"
+                required
+                aria-required="true"
+              >
+            </div>
+          </div>
+
+          <div class="ishori-field">
+            <label class="ishori-label" for="ContactForm-subject">Subject</label>
+            <div class="select-wrapper">
+              <select id="ContactForm-subject" name="contact[subject]" class="ishori-select">
+                <option value="Product Inquiry">Product Inquiry</option>
+                <option value="Order Status">Order Status</option>
+                <option value="Custom Order">Custom Order Request</option>
+                <option value="Partnership">Partnership/Wholesale</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="ishori-field">
+            <label class="ishori-label" for="ContactForm-body">Message <span aria-hidden="true">*</span></label>
+            <textarea
+              rows="10"
+              id="ContactForm-body"
+              class="ishori-textarea"
+              name="contact[body]"
+              placeholder="How can we help you today?"
+              required
+              aria-required="true"
+            >{{ form.body }}</textarea>
+          </div>
+
+          {% if section.settings.enable_recaptcha %}
+            <p style="font-size: 0.75rem; color: #999; margin-bottom: 15px;">
+              This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+            </p>
+          {% endif %}
+
+          <button type="submit" class="ishori-btn">
+            <span class="ishori-btn-text">{{ section.settings.btn_text }}</span>
+            <span class="ishori-spinner"></span>
+          </button>
+        {% endform %}
+      </div>
+
+      <div class="ishori-info-wrapper">
+        {% for block in section.blocks %}
+          <div class="ishori-block" {{ block.shopify_attributes }}>
+            
+            <div class="ishori-icon-box">
+              {% if block.settings.custom_icon_svg != blank %}
+                {{ block.settings.custom_icon_svg }}
+              {% else %}
+                {% case block.type %}
+                  {% when 'address' %}
+                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  {% when 'phone' %}
+                    <svg viewBox="0 0 24 24"><path d="M22 16.92v3.08a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-4.86-4.86A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.1 2h3.08a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  {% when 'email' %}
+                    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                  {% when 'hours' %}
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  {% when 'social' %}
+                     <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                  {% when 'custom' %}
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                {% endcase %}
+              {% endif %}
+            </div>
+
+            <div class="ishori-block-content">
+              {% if block.settings.title != blank %}
+                <h3>{{ block.settings.title }}</h3>
+              {% endif %}
+
+              {% case block.type %}
+                {% when 'address' %}
+                  <p>{{ block.settings.address | newline_to_br }}</p>
+                  {% if block.settings.map_link != blank %}
+                    <a href="{{ block.settings.map_link }}" target="_blank">Get Directions &rarr;</a>
+                  {% endif %}
+
+                {% when 'phone' %}
+                  <a href="tel:{{ block.settings.phone_number | replace: ' ', '' }}">{{ block.settings.phone_number }}</a>
+                  {% if block.settings.sub_text != blank %}<p style="font-size: 0.8em; margin-top: 2px;">{{ block.settings.sub_text }}</p>{% endif %}
+
+                {% when 'email' %}
+                   <a href="mailto:{{ block.settings.email }}">{{ block.settings.email }}</a>
+
+                {% when 'hours' %}
+                  <p>{{ block.settings.hours | newline_to_br }}</p>
+
+                {% when 'social' %}
+                  <div class="ishori-social-list">
+                     {% comment %}
+                       We manually add a few common social icons here for simplicity. 
+                       Ideally, this should pull from theme settings, but this makes the section standalone.
+                     {% endcomment %}
+                     {% if block.settings.show_instagram %}<a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>{% endif %}
+                     {% if block.settings.show_facebook %}<a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>{% endif %}
+                  </div>
+
+                {% when 'custom' %}
+                  {% if block.settings.link_url != blank %}
+                    <a href="{{ block.settings.link_url }}">{{ block.settings.custom_text | newline_to_br }}</a>
+                  {% else %}
+                     <p>{{ block.settings.custom_text | newline_to_br }}</p>
+                  {% endif %}
+
+              {% endcase %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('#contact_form');
+    const btn = form.querySelector('.ishori-btn');
+    
+    if(form) {
+      form.addEventListener('submit', function(e) {
+        // Simple loading state
+        // Note: If form is invalid, browser HTML5 validation stops this before execution
+        btn.classList.add('loading');
+        btn.disabled = true;
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Ishori Premium Contact",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "label": "Max Width",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Column Gap",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Padding (Desktop)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Left Padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Right Padding",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Content Settings"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Form Heading",
+      "default": "Get in Touch"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Form Description",
+      "default": "We would love to hear from you. Please fill out the form below."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_recaptcha",
+      "label": "Show reCAPTCHA disclaimer",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Form Styling"
+    },
+    {
+      "type": "color",
+      "id": "form_bg_color",
+      "label": "Form Background",
+      "default": "#F9F9F9"
+    },
+    {
+      "type": "range",
+      "id": "form_padding",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Form Padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "form_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Form Radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Input Styling"
+    },
+    {
+      "type": "range",
+      "id": "input_height",
+      "min": 40,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "label": "Input Height",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "textarea_height",
+      "min": 100,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "label": "Textarea Height",
+      "default": 150
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Border Color",
+      "default": "#E0E0E0"
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Input Radius",
+      "default": 4
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Text Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label Color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Button Styling"
+    },
+    {
+      "type": "text",
+      "id": "btn_text",
+      "label": "Button Text",
+      "default": "Send Message"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg_color",
+      "label": "Hover Background",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_y",
+      "min": 10,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding Vertical",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_x",
+      "min": 20,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding Horizontal",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "btn_radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Button Radius",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font Size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Info Block Styling"
+    },
+    {
+      "type": "range",
+      "id": "info_block_spacing",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Block Spacing",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 20,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Icon Size",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "info_title_size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Title Size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "info_title_color",
+      "label": "Title Color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "info_content_size",
+      "min": 14,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Content Size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "info_content_color",
+      "label": "Content Color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 24,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading Size",
+      "default": 36
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "desc_size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Description Size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "desc_color",
+      "label": "Description Color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Mobile Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_mobile",
+      "label": "Stack Columns",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "mob_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Mobile Top Padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "mob_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Mobile Bottom Padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "mob_padding_horizontal",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Mobile Side Padding",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "mob_heading_size",
+      "min": 20,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Mobile Heading Size",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "mob_desc_size",
+      "min": 14,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Mobile Desc Size",
+      "default": 15
+    }
+  ],
+  "blocks": [
+    {
+      "type": "address",
+      "name": "Address Block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Our Atelier"
+        },
+        {
+          "type": "textarea",
+          "id": "address",
+          "label": "Address",
+          "default": "Ishori Silks, Heritage Lane,\nJaipur, Rajasthan, 302001"
+        },
+        {
+          "type": "url",
+          "id": "map_link",
+          "label": "Google Maps Link"
+        },
+        {
+          "type": "html",
+          "id": "custom_icon_svg",
+          "label": "Custom SVG Icon (Optional)",
+          "info": "Paste SVG code here to override default"
+        }
+      ]
+    },
+    {
+      "type": "phone",
+      "name": "Phone Block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Phone"
+        },
+        {
+          "type": "text",
+          "id": "phone_number",
+          "label": "Phone Number",
+          "default": "+91 98765 43210"
+        },
+        {
+          "type": "text",
+          "id": "sub_text",
+          "label": "Sub-text",
+          "default": "Mon-Sat, 10am - 7pm"
+        },
+        {
+          "type": "html",
+          "id": "custom_icon_svg",
+          "label": "Custom SVG Icon (Optional)"
+        }
+      ]
+    },
+    {
+      "type": "email",
+      "name": "Email Block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Email"
+        },
+        {
+          "type": "text",
+          "id": "email",
+          "label": "Email Address",
+          "default": "hello@ishori.com"
+        },
+        {
+          "type": "html",
+          "id": "custom_icon_svg",
+          "label": "Custom SVG Icon (Optional)"
+        }
+      ]
+    },
+    {
+      "type": "hours",
+      "name": "Business Hours",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Hours"
+        },
+        {
+          "type": "textarea",
+          "id": "hours",
+          "label": "Hours Text",
+          "default": "Monday - Saturday: 10am - 7pm\nSunday: Closed"
+        },
+        {
+          "type": "html",
+          "id": "custom_icon_svg",
+          "label": "Custom SVG Icon (Optional)"
+        }
+      ]
+    },
+    {
+      "type": "social",
+      "name": "Social Media",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Follow Us"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_instagram",
+          "label": "Show Instagram",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_facebook",
+          "label": "Show Facebook",
+          "default": true
+        },
+        {
+          "type": "html",
+          "id": "custom_icon_svg",
+          "label": "Custom SVG Icon (Optional)"
+        }
+      ]
+    },
+    {
+      "type": "custom",
+      "name": "Custom Info",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Custom Title"
+        },
+        {
+          "type": "textarea",
+          "id": "custom_text",
+          "label": "Text",
+          "default": "Additional information regarding appointments or bespoke services."
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link URL (Optional)"
+        },
+        {
+          "type": "html",
+          "id": "custom_icon_svg",
+          "label": "Custom SVG Icon (Optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ishori Premium Contact",
+      "blocks": [
+        { "type": "address" },
+        { "type": "phone" },
+        { "type": "email" },
+        { "type": "hours" }
+      ]
+    }
+  ]
+}
+{% endschema %}
